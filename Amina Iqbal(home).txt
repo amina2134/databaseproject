@@ -1,0 +1,572 @@
+                                           Home file
+
+
+import 'package:amnaproject/person.dart';
+import 'package:amnaproject/services/database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
+class homepage extends StatefulWidget {
+  const homepage({super.key});
+
+  @override
+  State<homepage> createState() => _homepageState();
+}
+
+class _homepageState extends State<homepage> {
+  Stream? PersonStream;
+  getpersonload() async {
+    PersonStream = await DatabaseMethods().getPersonData();
+    setState(() {});
+  }
+
+  TextEditingController NameController = new TextEditingController();
+  TextEditingController AgeController = new TextEditingController();
+  TextEditingController LocationController = new TextEditingController();
+  TextEditingController DateController = new TextEditingController();
+  TextEditingController DateofBirthController = new TextEditingController();
+  TextEditingController CityController = new TextEditingController();
+  TextEditingController AddressController = new TextEditingController();
+  TextEditingController GenderController = new TextEditingController();
+  TextEditingController FatherNameController = new TextEditingController();
+  TextEditingController FavouriteColorController = new TextEditingController();
+  TextEditingController FavouriteCityController = new TextEditingController();
+  TextEditingController DepartmentController = new TextEditingController();
+
+  @override
+  void initState() {
+    getpersonload();
+    super.initState();
+  }
+
+  Widget AllPersonDetails() {
+    return StreamBuilder(
+        stream: PersonStream,
+        builder: (context, AsyncSnapshot snapshot) {
+          return snapshot.hasData
+              ? ListView.builder(
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (context, index) {
+                DocumentSnapshot ds = snapshot.data.docs[index];
+                return Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: Material(
+                    elevation: 5.0,
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: EdgeInsets.all(15),
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "Name : " + ds["Name"],
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 25,
+                                      color: Colors.pink),
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      NameController.text = ds["Name"];
+                                      AgeController.text = ds["Age"];
+                                      LocationController.text = ds["Location"];
+                                      DateController.text = ds["Date"];
+                                      DateofBirthController.text = ds["DateofBirth"];
+                                      CityController.text = ds["City"];
+                                      AddressController.text = ds["Address"];
+                                      GenderController.text = ds["Gender"];
+                                      FatherNameController.text = ds["FatherName"];
+                                      FavouriteColorController.text = ds["FavouriteColor"];
+                                      FavouriteCityController.text = ds["FavouriteCity"];
+                                      DepartmentController.text = ds["Department"];
+                                      EditPersonDetails(ds["id"]);
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  SizedBox(width: 15),
+                                  GestureDetector(
+                                      onTap: () async {
+                                        await DatabaseMethods()
+                                            .DeleteUserInfo(ds["id"]);
+                                      },
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      )),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Text(
+                            "Age :  " + ds["Age"],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.black),
+                          ),
+                          Text(
+                            "Location : " + ds["Location"],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.green),
+                          ),
+                          Text(
+                            "Date : " + ds["Date"],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.green),
+                          ),
+                          Text(
+                            "DateofBirth : " + ds["DateofBirth"],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.green),
+                          ),
+                          Text(
+                            "City : " + ds["City"],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.green),
+                          ),
+                          Text(
+                            "Address : " + ds["Address"],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.green),
+                          ),
+                          Text(
+                            "Gender : " + ds["Gender"],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.green),
+                          ),
+                          Text(
+                            "FatherName : " + ds["FatherName"],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.green),
+                          ),
+                          Text(
+                            "FavouriteColor : " + ds["FavouriteColor"],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.green),
+                          ),
+                          Text(
+                            "FavouriteCity : " + ds["FavouriteCity"],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.green),
+                          ),
+                          Text(
+                            "Department : " + ds["Department"],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.green),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              })
+              : Container();
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Myperson()));
+          },
+          child: Icon(Icons.add),
+        ),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: Row(
+            children: [
+              Text(
+                "Database",
+                style: TextStyle(
+                    fontSize: 27,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+              ),
+              Text(
+                "RecordApp",
+                style: TextStyle(
+                    fontSize: 27,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+              ),
+            ],
+          ),
+        ),
+        body: Container(
+          margin: EdgeInsets.only(left: 20.0, right: 20.0, top: 30.0),
+          child: Column(
+            children: [Expanded(child: AllPersonDetails())],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future EditPersonDetails(String id) => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Edit Details",
+                    style: TextStyle(
+                        fontSize: 27,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black),
+                  ),
+                  GestureDetector(
+                    child: Icon(Icons.cancel),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Text("Name",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrange)),
+              SizedBox(height: 5),
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextField(
+                  controller: NameController,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text("Age",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrange)),
+              SizedBox(height: 5),
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextField(
+                  controller: AgeController,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text("Location",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrangeAccent)),
+              SizedBox(height: 5),
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextField(
+                  controller: LocationController,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text("Date",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrangeAccent)),
+              SizedBox(height: 5),
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextField(
+                  controller: DateController,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text("Date of Birth",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrangeAccent)),
+              SizedBox(height: 5),
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextField(
+                  controller: DateofBirthController,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text("City",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrangeAccent)),
+              SizedBox(height: 5),
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextField(
+                  controller: CityController,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text("Address",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrangeAccent)),
+              SizedBox(height: 5),
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextField(
+                  controller: AddressController,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text("Gender",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrangeAccent)),
+              SizedBox(height: 5),
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextField(
+                  controller: GenderController,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text("Father Name",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrangeAccent)),
+              SizedBox(height: 5),
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextField(
+                  controller: FatherNameController,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text("Favourite Color",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrangeAccent)),
+              SizedBox(height: 5),
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextField(
+                  controller: FavouriteColorController,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text("Favourite City",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrangeAccent)),
+              SizedBox(height: 5),
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextField(
+                  controller: FavouriteCityController,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text("Department",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrangeAccent)),
+              SizedBox(height: 5),
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10)),
+                child: TextField(
+                  controller: DepartmentController,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlueAccent,
+                    minimumSize: Size(double.infinity, 50)),
+                onPressed: () async {
+                  Map<String, dynamic> PersonUpdatedMap = {
+                    "Name": NameController.text,
+                    "Age": AgeController.text,
+                    "Location": LocationController.text,
+                    "Date": DateController.text,
+                    "DateofBirth": DateofBirthController.text,
+                    "City": CityController.text,
+                    "Address": AddressController.text,
+                    "Gender": GenderController.text,
+                    "FatherName": FatherNameController.text,
+                    "FavouriteColor": FavouriteColorController.text,
+                    "FavouriteCity": FavouriteCityController.text,
+                    "Department": DepartmentController.text,
+                    "id": id,
+                  };
+                  await DatabaseMethods()
+                      .UpdataUserInfo(id, PersonUpdatedMap)
+                      .then((value) => Navigator.pop(context));
+                },
+                child: Text(
+                  "Update",
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ));
+}
